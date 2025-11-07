@@ -4,16 +4,14 @@ import pickle
 import numpy as np
 import pandas as pd
 import streamlit as st
-from keras.models import load_model
-from keras.preprocessing.sequence import pad_sequences
+import tensorflow as tf  # ✅ Import TensorFlow and give it alias 'tf'
 
-import plotly.graph_objects as go
+from plotly import graph_objects as go
 import plotly.express as px
 
-import os
+# TensorFlow environment setup
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # 0 = all logs, 1 = warnings, 2 = errors only
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"  # keep optimized ops on
-
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"  # disable CPU optimizations if needed
 
 # ────────────────────────────────
 # 📘 PAGE CONFIGURATION
@@ -61,8 +59,8 @@ def load_models_and_tokenizer():
         ann_model_path = os.path.join(BASE_DIR, "sentiment_ann.h5")
         tokenizer_path = os.path.join(BASE_DIR, "tokenizer.pickle")
 
-        lstm_model = load_model(lstm_model_path)
-        ann_model = load_model(ann_model_path)
+        lstm_model = tf.keras.models.load_model(lstm_model_path)
+        ann_model = tf.keras.models.load_model(ann_model_path)
         with open(tokenizer_path, "rb") as f:
             tokenizer = pickle.load(f)
 
@@ -90,21 +88,18 @@ def predict_sentiment(text, model, tokenizer, max_len=50):
     """Predict sentiment for a given text."""
     cleaned = preprocess_tweet(text)
     seq = tokenizer.texts_to_sequences([cleaned])
-    padded = pad_sequences(seq, maxlen=max_len, padding="post", truncating="post")
+    padded = tf.keras.preprocessing.sequence.pad_sequences(seq, maxlen=max_len, padding="post", truncating="post")
     pred = model.predict(padded, verbose=0)[0][0]
 
     sentiment = "Positive" if pred > 0.5 else "Negative"
     confidence = pred if pred > 0.5 else (1 - pred)
 
-    # 🔧 Convert to native float to avoid Streamlit type error
     return sentiment, float(confidence), cleaned
-
 
 # ────────────────────────────────
 # 📊 VISUALIZATION
 # ────────────────────────────────
 def create_gauge_chart(confidence, sentiment):
-    """Create gauge chart for confidence visualization."""
     color = "#10b981" if sentiment == "Positive" else "#ef4444"
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
@@ -142,7 +137,7 @@ def main():
     st.sidebar.metric("LSTM Accuracy", "85%", "5%")
     st.sidebar.metric("ANN Accuracy", "80%", "-")
 
-    # ──────────────── PAGE 1 ────────────────
+    # 🏠 Single Tweet Analysis
     if page == "🏠 Single Tweet Analysis":
         st.header("Analyze a Single Tweet")
         col1, col2 = st.columns([2, 1])
@@ -167,7 +162,7 @@ def main():
                 with res2:
                     st.plotly_chart(create_gauge_chart(confidence, sentiment), use_container_width=True)
 
-    # ──────────────── PAGE 2 ────────────────
+    # 📝 Batch Analysis
     elif page == "📝 Batch Analysis":
         st.header("Batch Sentiment Analysis")
         tab1, tab2 = st.tabs(["📄 Paste Text", "📁 Upload CSV"])
@@ -203,7 +198,7 @@ def main():
                     st.dataframe(df)
                     st.download_button("📥 Download CSV", df.to_csv(index=False), "analyzed.csv", "text/csv")
 
-    # ──────────────── PAGE 3 ────────────────
+    # 🔬 Model Comparison
     elif page == "🔬 Model Comparison":
         st.header("Compare LSTM vs ANN")
         tweet = st.text_input("Enter a tweet:")
@@ -215,11 +210,10 @@ def main():
                 with col:
                     emoji = "😊" if s == "Positive" else "😞"
                     st.markdown(f"### {label}: {s} {emoji}")
-                    st.progress((float(c))
-)
+                    st.progress((float(c)))
                     st.caption(f"Confidence: {c*100:.2f}%")
 
-    # ──────────────── PAGE 4 ────────────────
+    # ℹ️ About
     else:
         st.header("About This Project")
         st.markdown("""
