@@ -1,0 +1,85 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+sentiment/  # Your virtual environment
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Data files (if you don't want to commit large datasets)
+*.csv
+*.tsv
+*.txt
+data/
+datasets/
+raw_data/
+
+# Model files (IMPORTANT: Comment these out if you WANT to commit models)
+# If models are <100MB, you CAN commit them. If >100MB, keep these uncommented.
+# *.h5
+# *.keras
+# *.pkl
+# *.pickle
+
+# Training outputs
+logs/
+checkpoints/
+*.log
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/config.toml
+
+# Environment variables
+.env
+.env.local
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+# Plots and figures (if generated during testing)
+*.png
+*.jpg
+*.pdf
+training_comparison.png
