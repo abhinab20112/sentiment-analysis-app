@@ -4,14 +4,15 @@ import pickle
 import numpy as np
 import pandas as pd
 import streamlit as st
-from keras.models import load_model
-from keras.utils import pad_sequences
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+
 import plotly.graph_objects as go
 import plotly.express as px
 
 import os
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # 0 = all logs, 1 = warnings, 2 = errors only
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "1"  # keep optimized ops on
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"  # keep optimized ops on
 
 
 # ────────────────────────────────
