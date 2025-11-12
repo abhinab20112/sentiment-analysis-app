@@ -48,6 +48,7 @@ sentiment/  # Your virtual environment
 data/
 datasets/
 raw_data/
+sentiment/
 
 # Model files (IMPORTANT: Comment these out if you WANT to commit models)
 # If models are <100MB, you CAN commit them. If >100MB, keep these uncommented.
